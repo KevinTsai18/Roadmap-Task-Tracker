@@ -1,8 +1,22 @@
 import json
 import os
+import datetime
 
 
-def add_task(command, list):
+def add_task(command, task_list):
+    argument = command.removeprefix("add ")
+    if ((argument[0] == '"' and argument[-1] == '"') or (argument[0] == "'" and argument[-1] == "'")):
+        task_name = argument[1:-1]
+        task_id = len(task_list) + 1
+        task_description = input("Please add the task's description: ")
+        task_status = "todo"
+        task_creation_date = datetime.datetime.now()
+        task_update_date = datetime.datetime.now()
+        task = [task_id, task_name, task_description,
+                task_status, task_creation_date, task_update_date]
+        task_list.append(task)
+    else:
+        print("Errpr: invalid argument!")
 
 
 def load_task_list():
@@ -53,9 +67,11 @@ def display_title(title):
 
 def main():
     try:
+        # First, we try to load the task list JSON file
         task_list = load_task_list()
         print("Successfully loaded task list")
     except FileNotFoundError:
+        # If it's not foumnd, we create a new file
         print("Task list file not found! Creating a new file...")
         task_list = []
     display_title("Task Tracker")
@@ -68,8 +84,14 @@ def main():
         if (valid_command == "invalid"):
             print("Error: Invalid command!")
         else:
-            if valid_command.startswith("add"):
-                add_task(valid_command, task_list)
+            if (len(valid_command.split()) == 1):
+                print("Error: Invalid command!")
+            else:
+                command_type = valid_command.split(" ", 1)[0]
+                match command_type:
+                    case "add":
+                        add_task(valid_command, task_list)
+
         exit = True
 
 
