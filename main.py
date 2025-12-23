@@ -3,6 +3,30 @@ import os
 import datetime
 
 
+def update_task(command, task_list):
+    argument = command.removeprefix("task-cli update ")
+    if (len(argument.split()) < 2):
+        print("Error: Not enough parameters!")
+    else:
+        new_description = argument.split(" ", 1)[1]
+        if ((new_description[0] == '"' and new_description[-1] == '"') or (new_description[0] == "'" and new_description[-1] == "'")):
+            new_description = new_description[1:-1]
+            id_found = False
+            try:
+                task_id = int(argument.split(" ", 1)[0])
+            except:
+                print("Error: You've entered an invalid ID!")
+            for task in task_list:
+                if task[0] == task_id:
+                    id_found = True
+                    task[2] = new_description
+                    print("Description updated successfully!")
+            if (not id_found):
+                print("Error: ID not found!")
+        else:
+            print("Error: Invalid argument format!")
+
+
 def save_task_list(task_list):
     file = open("task_list.json", "w")
     json.dump(task_list, file)
@@ -33,7 +57,7 @@ def add_task(command, task_list):
                 task_status, task_creation_date, task_update_date]
         task_list.append(task)
     else:
-        print("Error: Invalid argument!")
+        print("Error: Invalid argument format!")
 
 
 def load_task_list():
@@ -64,11 +88,10 @@ def display_menu():
     # Prints the command list
     print("*** Command List ***")
     print(""" - task-cli add "task_name"
- - task-cli update task_ID
+ - task-cli update task_ID "new description"
  - task-cli delete task_ID
- - task-cli mark todo
- - task-cli mark in-progress
- - task-cli mark done
+ - task-cli mark in-progress task_ID
+ - task-cli mark done task_ID
  - task-cli list
  - task-cli list done
  - task-cli list todo
@@ -100,14 +123,17 @@ def main():
         user_input = input().lower()
         # We check if the user input is valid
         valid_command = check_valid_command(user_input)
-        print(valid_command)
+        # print(valid_command)
         if (not valid_command):
             print("Error: Invalid input!")
         else:
+            # command_type is the part of the commando that indicates the function. It removes "task-cli" and the other arguments from the user's input
             command_type = user_input.split()[1]
             match command_type:
                 case "add":
                     add_task(user_input, task_list)
+                case "update":
+                    update_task(user_input, task_list)
                 case "exit":
                     exit = True
                 case _:

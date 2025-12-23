@@ -30,5 +30,13 @@
         "todo",
         "2025-12-23 00:21:08",
         "2025-12-23 00:21:08"
+    ],
+    [
+        5,
+        "update task test",
+        "now the description should skip the end quotes",
+        "todo",
+        "2025-12-23 15:54:51",
+        "2025-12-23 15:54:51"
     ]
 ]
