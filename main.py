@@ -3,42 +3,61 @@ import os
 import datetime
 
 
+def save_task_list(task_list):
+    file = open("task_list.json", "w")
+    json.dump(task_list, file)
+    file.close()
+
+
+def get_last_id(task_list):
+    id = 0
+    for task in task_list:
+        if task[0] > id:
+            id = task[0]
+    return id
+
+
 def add_task(command, task_list):
-    argument = command.removeprefix("add ")
+    argument = command.removeprefix("task-cli add ")
     if ((argument[0] == '"' and argument[-1] == '"') or (argument[0] == "'" and argument[-1] == "'")):
         task_name = argument[1:-1]
-        task_id = len(task_list) + 1
+        if len(task_list) == 0:
+            task_id = 1
+        else:
+            task_id = get_last_id(task_list)+1
         task_description = input("Please add the task's description: ")
         task_status = "todo"
-        task_creation_date = datetime.datetime.now()
-        task_update_date = datetime.datetime.now()
+        task_creation_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        task_update_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         task = [task_id, task_name, task_description,
                 task_status, task_creation_date, task_update_date]
         task_list.append(task)
     else:
-        print("Errpr: invalid argument!")
+        print("Error: Invalid argument!")
 
 
 def load_task_list():
-    file = open("tasklist.json", "r")
+    file = open("task_list.json", "r")
     task_list = json.load(file)
     file.close()
     return task_list
 
 
 def check_valid_command(text):
-    # First, we evaluate if the text the user inputed contains "task-cli" as its first word
+    # First, we evaluate if the text the user inputed starts with "task-cli"
     first_word = text.split(" ", 1)[0]
     # print(first_word)
     if (first_word != "task-cli" or len(text.split()) == 1):
-        return ("invalid")
+        # We also make sure that it also includes more than one word
+        return False
     else:
         valid_commands = ["add", "update", "delete", "mark", "list", "exit"]
         command = text.split(" ")[1]
+        # Lastly, we make sure that the second word is included in the allowed commands
         if (command in valid_commands):
-            return command
+            return True
         else:
-            return ("invalid")
+            return False
 
 
 def display_menu():
@@ -79,20 +98,26 @@ def main():
     while not exit:
         display_menu()
         user_input = input().lower()
+        # We check if the user input is valid
         valid_command = check_valid_command(user_input)
-        # print(valid_command)
-        if (valid_command == "invalid"):
-            print("Error: Invalid command!")
+        print(valid_command)
+        if (not valid_command):
+            print("Error: Invalid input!")
         else:
-            if (len(valid_command.split()) == 1):
-                print("Error: Invalid command!")
-            else:
-                command_type = valid_command.split(" ", 1)[0]
-                match command_type:
-                    case "add":
-                        add_task(valid_command, task_list)
-
+            command_type = user_input.split()[1]
+            match command_type:
+                case "add":
+                    add_task(user_input, task_list)
+                case "exit":
+                    exit = True
+                case _:
+                    print("Error: Invalid command!")
+            input("Press enter to continue ")
+            os.system("cls" if os.name == "nt" else "clear")
         exit = True
+    save_task_list(task_list)
+    print("Saving changes...")
+    print("App closed successfully!")
 
 
 if __name__ == "__main__":

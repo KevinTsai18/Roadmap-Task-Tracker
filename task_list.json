@@ -1,0 +1,34 @@
+[
+    [
+        1,
+        "test1",
+        "test to see if ids work correctly",
+        "todo",
+        "2025-12-23 00:19:01",
+        "2025-12-23 00:19:01"
+    ],
+    [
+        2,
+        "test2",
+        "now the second task's id should be 2",
+        "todo",
+        "2025-12-23 00:19:28",
+        "2025-12-23 00:19:28"
+    ],
+    [
+        3,
+        "test3",
+        "this task's id should be 3",
+        "todo",
+        "2025-12-23 00:19:56",
+        "2025-12-23 00:19:56"
+    ],
+    [
+        4,
+        "test4",
+        "I just want to check if the JSON file's format affects anything",
+        "todo",
+        "2025-12-23 00:21:08",
+        "2025-12-23 00:21:08"
+    ]
+]
