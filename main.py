@@ -3,6 +3,22 @@ import os
 import datetime
 
 
+def delete_task(command, task_list):
+    argument = command.removeprefix("task-cli delete ")
+    try:
+        argument = int(argument)
+    except:
+        print("Error: Invalid argument for ID!")
+    id_found = False
+    for task in task_list:
+        if task[0] == argument:
+            id_found = True
+            task_list.remove(task)
+            print("Task deleted successfully!")
+    if id_found == False:
+        print("Error: ID not found!")
+
+
 def update_task(command, task_list):
     argument = command.removeprefix("task-cli update ")
     if (len(argument.split()) < 2):
@@ -134,6 +150,8 @@ def main():
                     add_task(user_input, task_list)
                 case "update":
                     update_task(user_input, task_list)
+                case "delete":
+                    delete_task(user_input, task_list)
                 case "exit":
                     exit = True
                 case _:
