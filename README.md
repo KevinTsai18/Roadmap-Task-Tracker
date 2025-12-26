@@ -11,3 +11,4 @@ This is a small project made with Python. It's a Task Tracker application made u
 
 @Project URL:
 https://github.com/KevinTsai18/Roadmap-Task-Tracker
+https://roadmap.sh/projects/task-tracker
