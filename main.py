@@ -216,7 +216,7 @@ def main():
                     print("Error: Invalid command!")
             input("Press enter to continue ")
             os.system("cls" if os.name == "nt" else "clear")
-        exit = True
+        # exit = True
     save_task_list(task_list)
     print("Saving changes...")
     print("App closed successfully!")
