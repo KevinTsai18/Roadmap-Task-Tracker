@@ -3,6 +3,58 @@ import os
 import datetime
 
 
+def print_tasks(task_list):
+    print("TASK_LIST")
+    for task in task_list:
+        print(f"""{task[0]} - {task[1]} - {task[3]}
+* {task[2]}
+* Creation Date: {task[4]}
+* Last Update: {task[5]}
+""")
+
+
+def list_tasks(command, task_list):
+    if (len(task_list) == 0):
+        print("The task list is empty!")
+    else:
+        if command == "task-cli list":
+            print_tasks(task_list)
+        else:
+            argument = command.removeprefix("task-cli list ")
+            if len(argument.split()) != 1:
+                print("Error: Incorrect number of parameters!")
+            else:
+                filtered_list = []
+                for task in task_list:
+                    if task[3] == argument:
+                        filtered_list.append(task)
+                print_tasks(filtered_list)
+
+
+def mark_task(command, task_list):
+    argument = command.removeprefix("task-cli mark ")
+    if len(argument.split()) != 2:
+        print("Error: Incorrect number of parameters!")
+    else:
+        if ((argument.split()[0] == "in-progress") or (argument.split()[0] == "done")):
+            try:
+                id = int(argument.split()[1])
+            except:
+                print("Error: Invalid ID type!")
+            id_found = False
+            for task in task_list:
+                if task[0] == id:
+                    id_found = True
+                    task[3] = argument.split()[0]
+                    print("Task marked successfully!")
+                    task[5] = datetime.datetime.now().strftime(
+                        "%Y-%m-%d %H:%M:%S")
+            if (not id_found):
+                print("Error: ID not found!")
+        else:
+            print("Error: Invalid mark command")
+
+
 def delete_task(command, task_list):
     argument = command.removeprefix("task-cli delete ")
     try:
@@ -21,8 +73,8 @@ def delete_task(command, task_list):
 
 def update_task(command, task_list):
     argument = command.removeprefix("task-cli update ")
-    if (len(argument.split()) < 2):
-        print("Error: Not enough parameters!")
+    if (len(argument.split()) != 2):
+        print("Error: Incorrect number of parameters!")
     else:
         new_description = argument.split(" ", 1)[1]
         if ((new_description[0] == '"' and new_description[-1] == '"') or (new_description[0] == "'" and new_description[-1] == "'")):
@@ -37,6 +89,8 @@ def update_task(command, task_list):
                     id_found = True
                     task[2] = new_description
                     print("Description updated successfully!")
+                    task[5] = datetime.datetime.now().strftime(
+                        "%Y-%m-%d %H:%M:%S")
             if (not id_found):
                 print("Error: ID not found!")
         else:
@@ -152,6 +206,10 @@ def main():
                     update_task(user_input, task_list)
                 case "delete":
                     delete_task(user_input, task_list)
+                case "mark":
+                    mark_task(user_input, task_list)
+                case "list":
+                    list_tasks(user_input, task_list)
                 case "exit":
                     exit = True
                 case _:
